@@ -27,6 +27,8 @@ server.listen(port, hostname, () => {
 });
 ```
 
+将代码保存在名为example.js的文件中，通过Node.js执行脚本运行服务器
+
 ```
 $ node example.js
 Server running at http://127.0.0.1:3000/
