@@ -10,7 +10,7 @@ node [options] [v8 options] [script.js | -e "script"] [arguments]
 
 使用Node.js编写的[Web服务器](http.md)示例，该适应响应"Hello World"
 
-```js
+```javascript
 const http = require('http');
 
 const hostname = '127.0.0.1';

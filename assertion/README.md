@@ -17,6 +17,7 @@
 + [assert.strictEqual(actual, expected[,message])](#)
 + [assert.throws(block[,error][,message])](#)
 
+------
 
 ## Assert(断言)
 
@@ -28,7 +29,7 @@
 
 [assert.ok()](#assert.ok(value[,message]) 方法的别名
 
-```js
+```javascript
 const assert = require('assert');
 
 assert(true);
@@ -44,3 +45,4 @@ assert(false, 'it\'s false);
 ```
 
 ## assert.deepEqual(actual, expected[,message])
+
