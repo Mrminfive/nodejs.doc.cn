@@ -1,6 +1,10 @@
 ## ![nodejs](/images/nodejs.png) 中文文档(v7.2.0)
 
-### 关于此文档
+### 前言
+
+翻译这份文档的初衷是为了更全面的了解和学习node，加上node文档更新较快，国内翻译文档又跟不上节奏，因此有了翻译node文档的计划。文档根据最新的v7.2.0版本翻译，大家可以放心阅读
+
+### 简介
 
 文档翻译至[nodejs官方文档](https://nodejs.org/dist/latest-v7.x/docs/api/)，仅作学习与日常查看使用，一切以node官方文档为主。
 
@@ -8,12 +12,15 @@
 
 文档同时默认node环境已配置，关于node环境配置请参阅[nodejs官网](https://nodejs.org)自行配置
 
-> 翻译可能有些许偏差，欢迎提出修正
+### 备注
 
-### 文档结构
+*如果你在阅读过程中发现翻译上的错误，请[提交问题(issue)](https://github.com/Mrminfive/nodejs.doc.cn/issues/new)*
 
-+ [Usage & Example(使用实例)](/doc/usage&example.md)
-+ Assertion Testing
+### 章节目录
+
++ [About The Doc](/aboutTheDoc/)(关于此文档)
++ [Usage & Example](/usage&example/)(使用实例)
++ [Assertion Testing](/assertion/)(断言测试)
 + Buffer
 + C/C++ Addons(扩展)
 + Child Processes(子进程)
