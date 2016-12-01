@@ -26,7 +26,9 @@
 
 `assert` 模块提供了一组简单的方法，可用于做断言测试。该模块为 Node.js 内置模块，可以通过 `request('assert')` 引用并在应用代码中使用。然而， `assert` 并不是一个测试框架，也不会往通用断言库的方向去发展。
 
-#### assert(value[,message])
+---
+
+### assert(value[,message])
 
 [assert.ok()](#assertokvalue-message) 方法的别名
 
@@ -45,8 +47,9 @@ assert(false, 'it\'s false');
 // throws "AssertionError: it's false"
 ```
 
+---
 
-#### assert.equal(actual, expected[, message])
+### assert.equal(actual, expected[, message])
 
 浅测试，使用等于运算符（==）对 `actual` 和 `expected` 进行比较
 
@@ -70,8 +73,9 @@ assert.equal({}, {});
 
 如果这两个值不相等，将会抛出一个带有 `message` 属性(等于 `message` 参数的值)的 `AssertionError` 错误。如果 `message` 参数未定义，将会分配默认的错误信息。
 
+---
 
-#### assert.notEqual(actual, expected[, message])
+### assert.notEqual(actual, expected[, message])
 
 浅测试，使用不等于运算符（!=）对 `actual` 和 `expected` 进行比较
 
@@ -89,8 +93,9 @@ assert.notEqual(1, '1');
 
 如果这两个值相等，将会抛出一个带有 `message` 属性(等于 `message` 参数的值)的 `AssertionError` 错误。如果 `message` 参数未定义，将会分配默认的错误信息。
 
+---
 
-#### assert.strictEqual(actual, expected[, message])
+### assert.strictEqual(actual, expected[, message])
 
 使用全等运算符（===）进行测试。
 
@@ -109,8 +114,9 @@ assert.strictEqual(1, '1');
 
 如果这两个值不严格相等，将会抛出一个带有 `message` 属性(等于 `message` 参数的值)的 `AssertionError` 错误。如果 `message` 参数未定义，将会分配默认的错误信息。
 
+---
 
-#### assert.notStrictEqual(actual, expected[, message])
+### assert.notStrictEqual(actual, expected[, message])
 
 使用不全等运算符（!==）进行测试。
 
@@ -129,8 +135,9 @@ assert.strictEqual(1, '1');
 
 如果这两个值严格相等，将会抛出一个带有 `message` 属性(等于 `message` 参数的值)的 `AssertionError` 错误。如果 `message` 参数未定义，将会分配默认的错误信息。
 
+---
 
-#### assert.deepEqual(actual, expected[, message])
+### assert.deepEqual(actual, expected[, message])
 
 深度比较 `actual` 和 `expected` 参数，原始值采用（==）进行比较。
 
@@ -195,8 +202,9 @@ assert.deepEqual(obj1, obj4);
 
 如果这两个值不相等，将会抛出一个带有 `message` 属性(等于 `message` 参数的值)的 `AssertionError` 错误。如果 `message` 参数未定义，将会分配默认的错误信息。
 
+---
 
-#### assert.notDeepEqual(actual, expected[, message])
+### assert.notDeepEqual(actual, expected[, message])
 
 深度的不相等测试。与 [assert.deepEqual()](#assertdeepequalactual-expected-message) 相反。
 
@@ -235,8 +243,9 @@ assert.notDeepEqual(obj1, obj4);
 
 如果这两个值深度相等，将会抛出一个带有 `message` 属性(等于 `message` 参数的值)的 `AssertionError` 错误。如果 `message` 参数未定义，将会分配默认的错误信息。
 
+---
 
-#### assert.deepStrictEqual(actual, expected[, message])
+### assert.deepStrictEqual(actual, expected[, message])
 
 与 `assert.deepEqual` 方法相似，但有两点不同。首先，原始值是使用全等运算符（===）进行比较的。其次，将会对两个比较对象的原型进行严格比较
 
@@ -253,8 +262,9 @@ assert.deepStictEqual({ a: 1 }, { a: '1' });
 
 如果这两个值不相等，将会抛出一个带有 `message` 属性(等于 `message` 参数的值)的 `AssertionError` 错误。如果 `message` 参数未定义，将会分配默认的错误信息。
 
+---
 
-#### assert.notDeepStrictEqual(actual, expected[, message])
+### assert.notDeepStrictEqual(actual, expected[, message])
 
 深度严格不相等测试。与[assert.deepStrictEqual()](#q)。
 
@@ -268,8 +278,9 @@ assert.notDeepStrictEqual({ a: 1 }, { a: '1' });
 // OK
 ```
 
+---
 
-#### assert.ok(value[, message])
+### assert.ok(value[, message])
 
 测试 `value` 是不是真值。它等同于 `assert.equal(!!value, true, message)`。
 
@@ -288,8 +299,9 @@ assert.ok(false, 'it\'s false');
 
 如果 `value` 不是真值，将会抛出一个带有 `message` 属性(等于 `message` 参数的值)的 `AssertionError` 错误。如果 `message` 参数未定义，将会分配默认的错误信息。
 
+---
 
-#### assert.fail(actual, expected, message, operator)
+### assert.fail(actual, expected, message, operator)
 
 抛出一个 `AssertionError`。如果 `message` 是假值，错误信息会被设置为被 `operator` 分隔在两边 `actual` 和 `expected` 的值。否则，该错误信息会是 `message` 的值。
 
@@ -303,8 +315,9 @@ assert.fail(1, 2, 'whoops', '>');
 // AssertionError: whoops
 ```
 
+---
 
-#### assert.ifError(value)
+### assert.ifError(value)
 
 如果 `value` 是真值，抛出 `value` 错误。它对于验证回调函数的第一个参数十分有用。
 
@@ -333,8 +346,9 @@ api({}, (err, data) => {
 });
 ```
 
+---
 
-#### assert.throws(block[, error][, message])
+### assert.throws(block[, error][, message])
 
 断言 `block` 函数会抛出错误。
 
@@ -390,8 +404,9 @@ assert.throws(myFunction, 'missing foo', 'did not throw with expected message');
 assert.throws(myFunction, /missing foo/, 'did not throw with expected message');
 ```
 
+---
 
-#### assert.doesNotThrow(block[, error][, message])
+### assert.doesNotThrow(block[, error][, message])
 
 断言 `block` 函数不会抛出错误。更多细节请参照 [assert.thorws()]()
 
