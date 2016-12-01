@@ -1,9 +1,14 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-### 目录
+- [关于此文档](#%E5%85%B3%E4%BA%8E%E6%AD%A4%E6%96%87%E6%A1%A3)
+- [稳定度](#%E7%A8%B3%E5%AE%9A%E5%BA%A6)
+    - [稳定性指数如下：](#%E7%A8%B3%E5%AE%9A%E6%80%A7%E6%8C%87%E6%95%B0%E5%A6%82%E4%B8%8B)
+- [JSON格式输出](#json%E6%A0%BC%E5%BC%8F%E8%BE%93%E5%87%BA)
+- [系统调用和手册](#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%92%8C%E6%89%8B%E5%86%8C)
 
-+ [稳定度](#稳定度)
-+ [JSON格式输出](#JSON格式输出)
-+ [系统调用和手册](#系统调用和手册)
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ------
 
@@ -20,8 +25,7 @@
 ## 稳定度
 
 在整个文档中，你可能会看到某个部分有稳定性提示。随着 Node.js 的逐步完善，它的API仍然会有一些小的变化，以确保某些部分更加可靠。一些接受过严格验证，被大量依赖的 API 不会轻易做改动。一些是新增和实验性的，或已知具有危险性将会被重新设计。
-
-### 稳定性指数如下：
+#### 稳定性指数如下：
 
 > 稳定性：**0** - 已废弃
 这是一个存在问题的特性，目前正计划修改。*请不要使用该特性，*使用该功能可能会导致警告，不要指望该特性会向后兼容
