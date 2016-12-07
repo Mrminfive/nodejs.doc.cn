@@ -189,7 +189,9 @@ TODO
 
 ### `NODE_PATH=path[:...]`
 
+用 `:` 分隔的模块搜索路径的前缀列表。
 
+*请注意，在 Windows 中，是用 `;` 分隔的列表。*
 
 ### `NODE_DISABLE_COLORS=1`
 
