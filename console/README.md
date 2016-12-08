@@ -45,6 +45,8 @@ console.warn(`Danger ${name}! Danger!`);
 // Prints: Danger Will Robinson! Danger!, to stderr
 ```
 
+使用 `Console` 类的实例：
+
 ``` javascript
 const out = getStreamSomehow();
 const err = getStreamSomehow();
