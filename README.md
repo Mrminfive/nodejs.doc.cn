@@ -26,7 +26,7 @@
 + Child Processes(子进程)
 + Cluster()
 + [Command Line Options](/cli/)(命令行选项)
-+ Console
++ [Console](/console/)(控制台)
 + Crypto()
 + Debugger(调试)
 + DNS
