@@ -1,8 +1,8 @@
-## ![nodejs](/images/nodejs.png) 中文文档(v7.2.0)
+## ![nodejs](/images/nodejs.png) 中文文档(v7.3.0)
 
 ### 前言
 
-翻译这份文档的初衷是为了更全面的了解和学习node，加上node文档更新较快，国内翻译文档又跟不上节奏，因此有了翻译node文档的计划。文档根据最新的v7.2.0版本翻译，大家可以放心阅读
+翻译这份文档的初衷是为了更全面的了解和学习node，加上node文档更新较快，国内翻译文档又跟不上节奏，因此有了翻译node文档的计划。文档根据最新的v7.3.0版本翻译，大家可以放心阅读
 
 ### 简介
 
@@ -31,7 +31,7 @@
 + Debugger(调试)
 + DNS
 + Domain(域)
-+ Errors(错误模块)
++ [Errors](/errors/)(错误模块)
 + Events(事件模块)
 + File System(文件系统)
 + Globals(全局对象)
