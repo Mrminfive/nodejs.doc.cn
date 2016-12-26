@@ -1,3 +1,21 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [util(工具集)](#util%E5%B7%A5%E5%85%B7%E9%9B%86)
+  - [util.debuglog(section)](#utildebuglogsection)
+  - [util.deprecate(function, string)](#utildeprecatefunction-string)
+  - [util.format(format[, ...args])](#utilformatformat-args)
+  - [util.inherits(constructor, superConstructor)](#utilinheritsconstructor-superconstructor)
+  - [util.inspect(object[, options])](#utilinspectobject-options)
+    - [定制 `util.inspect` 颜色](#%E5%AE%9A%E5%88%B6-utilinspect-%E9%A2%9C%E8%89%B2)
+    - [在对象上定制 `inspect()` 函数](#%E5%9C%A8%E5%AF%B9%E8%B1%A1%E4%B8%8A%E5%AE%9A%E5%88%B6-inspect-%E5%87%BD%E6%95%B0)
+    - [util.inspect.defaultOptions](#utilinspectdefaultoptions)
+    - [util.inspect.custom](#utilinspectcustom)
+  - [已废弃的API](#%E5%B7%B2%E5%BA%9F%E5%BC%83%E7%9A%84api)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 # util(工具集)
 
@@ -80,7 +98,7 @@ util.format('%s:%s', 'foo');
 // Returns: 'foo:%s'
 ```
 
-如果传递给 `util.format()` 方法的参数多余占位符的数量，则额外的参数被强制转换为字符串（对于对象和符号，使用 [util.inspect()](#Todo) 处理），然后使用空格分隔后连接到返回的字符串中。
+如果传递给 `util.format()` 方法的参数多余占位符的数量，则额外的参数被强制转换为字符串（对于对象和符号，使用 [util.inspect()](#utilinspectobject-options) 处理），然后使用空格分隔后连接到返回的字符串中。
 
 ``` javascript
 uti;l.format('%s:%s', 'foo', 'bar', 'baz'); // 'foo:bar baz'
@@ -159,7 +177,7 @@ stream.write('With ES6');
 * `options` <Object>
 	* `showHidden` <boolean> 如果设置为 `true` ，`object` 的不可枚举和 symbol 属性都将展示出来。默认为 `false`。
 	* `depth` <number> 指定格式化对象时递归的次数。这对于检查大型复杂对象很有用。默认为 `2` 。设置为 `null` 可无限递归。
-	* `colors` <boolean> 如果设置为 `true`，将使用 ANSI 颜色代码样式输出。默认为 `false`。颜色允许自定义，请参阅[定制 util.inspect 颜色](#Todo)。
+	* `colors` <boolean> 如果设置为 `true`，将使用 ANSI 颜色代码样式输出。默认为 `false`。颜色允许自定义，请参阅[定制 util.inspect 颜色](#%E5%AE%9A%E5%88%B6-utilinspect-%E9%A2%9C%E8%89%B2)。
 	* `customInspect` <boolean> 如果设置为 `false`，`object` 上的自定义函数 `inspect(depth, opts)` 被检查时不会被调用。默认为 `true`。
 	* `showProxy` <boolean> 如果设置为 `true`，作为 [Proxy代理对象](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy) 的对象和函数将自动检查并显示其目标和处理程序对象。默认为 `false`。
 	* `maxArrayLength` <number> 指定要格式化的数组和 `TypedArray（类数组）` 元素的最大数目。默认为 `100`，设置为 `null` 显示所有数组元素。设置为 `0` 或负值，不显示数组元素。
@@ -289,7 +307,7 @@ console.log(arr); // logs the full array
 
 ### util.inspect.custom
 
-可用于声明自定义检查的 symbol ，请参阅 [对象上的自定义 inspect 函数](#Todo)。
+可用于声明自定义检查的 symbol ，请参阅 [在对象上定制 `inspect()` 函数](#%E5%9C%A8%E5%AF%B9%E8%B1%A1%E4%B8%8A%E5%AE%9A%E5%88%B6-inspect-%E5%87%BD%E6%95%B0)。
 
 ## 已废弃的API
 
