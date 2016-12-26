@@ -32,7 +32,7 @@
 + DNS
 + Domain(域)
 + [Errors](/errors/)(错误模块)
-+ Events(事件模块)
++ [Events](/events/)(事件模块)
 + File System(文件系统)
 + Globals(全局对象)
 + HTTP
