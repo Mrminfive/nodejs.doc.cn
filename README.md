@@ -28,7 +28,7 @@
 + [Command Line Options](/cli/)(命令行选项)
 + [Console](/console/)(控制台)
 + Crypto()
-+ Debugger(调试)
++ [Debugger](/debugger/)(调试)
 + DNS
 + Domain(域)
 + [Errors](/errors/)(错误模块)
