@@ -46,7 +46,7 @@
 + Query Strings
 + Readline
 + REPL(交互式解释器)
-+ Stream(流)
++ [Stream](/stream/)(流)
 + String Decoder
 + [Timers](/timers/)(定时器)
 + TLS/SSL
