@@ -21,7 +21,7 @@
 + [About The Doc](/aboutTheDoc/)(关于此文档)
 + [Usage & Example](/usage&example/)(使用实例)
 + [Assertion Testing](/assertion/)(断言测试)
-+ Buffer
++ [Buffer](/buffer/)
 + C/C++ Addons(扩展)
 + Child Processes(子进程)
 + Cluster()
