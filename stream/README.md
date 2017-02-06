@@ -292,3 +292,36 @@ file.end('world!');
 
 `writable.setDefaultEncoding()` 方法用于设置一个[可写](#TODE)流的默认 `encoding`。
 
+##### writable.write(chunk[,encoding][,callback])
+
+* `chunk` <String>|<Buffer> 写入的数据
+* `encoding` <String> 编码，如果 `chunk` 是字符串将使用该编码格式
+* `callback` <Function> 可选的当流完成时的回调函数
+* Returns: <Bollean> 如果返回 `false` 表示流希望在等待 `drain` 事件发出后再继续调用代码去写入附加数据，否则返回 `true`。
+
+`writable.write()` 方法将一些数据写入流中，并在数据完全处理后调用提供的回调函数。如果发生错误，则回调*可能会也可能不会*将错误作为第一个参数调用。为了检测写入错误，请监听 'error' 事件。
+
+如果允许数据写入后内部缓冲区小于创建时配置的 `highWaterMark`，则返回 `true`，如果返回 `false`，则表示内部缓冲区暂时无法支持数据的继续写入，应该停止向流中写入数据的操作，直到发出 `drain` 事件。
+
+当一个流不消耗时，对 `write()` 的调用将缓存 `chunk`，并返回 `false`。一旦所有当前缓冲的 `chunk` 被排空（由操作系统接收传递），将发出 `drain` 事件。建议一旦 `write()` 方法返回 `false`，在 'drani' 事件发出之前不再写入任何 `chunk`。当对未排空的流调用 `write()` 方法时，Node.js 将缓存所有写入的 `chunk`，直到最大内存使用率，此时它将被强制中止。甚至在被中止前，内存占满将导致垃圾收集器的性能变的糟糕和 RSS（通常不会释放会系统，即使在不再需要内存之后）。由于TCP套接字可能永远不会耗尽，如果远程对等体不读取数据，编写未排空的套接字可能导致可被远程利用的漏洞产生。
+
+对于 [双工流](#TODE) 来说在流不排出数据时写入数据尤其有问题，因为 `双工流` 被默认暂停，直到它们被管道化或者添加了 `data` 或 `readable` 事件后才会打开。
+
+如果要写入的数据可以根据需要生成或提取，建议将配置为 [可读流](#TODE) 并使用 [stream.pipe()](#TODE) 方法。但是，如果优先使用 `write()` 的话，则可以使用 `drain` 事件来避免内存问题。
+
+``` javascript
+function write(data, cb) {
+	if (!stream.write(data)) {
+		stream.once('drain', cb);
+	} else {
+		process.nextTick(cb);
+	}
+}
+
+// Wait for cb to be called before doing any other write.
+write('hello', () => {
+	console.log('write completed, do more writes now');
+});
+```
+
+对象模式中的可写流将始终忽略 `encoding` 参数。
