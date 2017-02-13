@@ -111,7 +111,7 @@ server.listen(1337);
 
 如果你正在自己的程序中实现流接口，请参阅[面向实现者的API](#Tode)。
 
-### 可写流
+### 可写流（Writable）
 
 可写流是数据被写入的*目的地*的抽象。
 
@@ -325,3 +325,83 @@ write('hello', () => {
 ```
 
 对象模式中的可写流将始终忽略 `encoding` 参数。
+
+
+### 可读流（Readable）
+
+可读流是一个你正在读取的数据*源*的抽象。
+
+可读流的例子包括：
+
+* [客户端上的 HTTP 请求](#TODE)
+* [服务器上的 HTTP 请求](#TODE)
+* [fs 读取流](#TODE)
+* [zlib 流](#TODE)
+* [crypto 流](#TODE)
+* [TCP 套接字](#TODE)
+* [子进程的 stdout 和 stderr](#TODE)
+* [process.stdin](#TODE)
+
+所有的[可读流](#TODE)都基于 `stream.Readable` 类实现。
+
+#### 两种模式
+
+可读流有两种有效的运行模式： 流动(flowing)和暂停(paused)。
+
+当处在流动模式时，数据从底层系统自动读取，并通过 [EventEmitter](#TODE) 接口使用事件尽可能快的提供给应用程序。
+
+在暂停模式下，必须显示调用 [stream.read()](#TODE) 方法以从流中读取数据块。
+
+所有可读流都以暂停模式开始，但可以通过以下方式切换到流模式：
+
+* 添加一个 ['data'](#TODE) 事件处理器。
+* 调用 [stream.resume()](#TODE) 方法来开启数据流
+* 调用 [stream.pipe()](#TODE) 方法将数据发送给一个[可写流](#TODE)。
+
+可读流可以使用以下方法切换为暂停模式：
+
+* 如果没有管道目标，则可以通过调用 [stream.pause()](#TODE) 方法切换。
+* 如果有管道目标，则可以通过删除所有 ['data'](#TODE) 事件处理程序，并通过调用 [stream.unpipe()](#TODE) 方法删除所有管道目标。
+
+要记住一个重要概念是，在没有提供消费或忽略该数据的机制之前，可读流是不会生成数据的。如果消费机制被禁用或移除，可读流将*尝试*停止生成数据。
+
+*注意*：出于向后兼容的考虑，删除 ['data'](#TODE) 事件处理程序**并不会**自动暂停流。此外，当有导流目标时，调用 [stream.pause()](#TODE) 并不能保证流在那些目标排空并请求更多数据时维持暂停状态。
+
+*注意*：如果[可读流](#TODE)切换到流动模式但没有可用的数据处理机制，该数据将丢失。例如，当在没有设置 `data` 事件处理程序的情况下调用 [readable.resume()](#TODE) 时或者当从流中移除 `data` 事件处理程序时，就会出现数据丢失。
+
+#### 三种状态
+
+可读流对“两种模式”的操作是在可读流中实现中发生的更复杂的内部状态管理的简单抽象。
+
+具体来说，在任何时候，任何可读；流都处在以下三种状态之一：
+
+* `readable._readableState.flowing = null`
+* `readable._readableState.flowing = false`
+* `readable._readableState.flowing = true`
+
+当 `readable._readavkeState.flowing` 为 `null` 时，表示没有提供消耗流数据的机制，因此流不会生成其数据。
+
+为流添加 `'data'` 事件监听器、调用 `readable.pipe()` 方法或调用 `readable.resume()` 方法会将 `readable._readableState.flowing` 切换为 `true`,  然后可读流才会在数据生成时主动触发事件。
+
+调用 `readable.pause()`、`readable.unpipe()` 或接收“back pressure” 将会导致 `readable._readableState.flowing` 被设置为 `false`，并临时停止事件的传播，但不会停止数据的生成。
+
+当 `readable._readableState.flowing` 为 `false` 时，数据可能会在流内部缓存区中积累。
+
+#### 只选一种
+
+可读流API随着 Node.js 版本的不断演进，提供了多种消耗流数据的方法。一般来说，开发人员应该只选择一种方法去使用数据而不是使用多种方法来从单个流中消耗数据。
+
+建议大家使用 `readable.pipe()` 方法，因为它提供最简单的消耗流数据的方法。当然，需要对数据传输和生成进行更细粒度控制的开发人员可以使用 [EventEmitter](../events/#class-eventemitter) 和 `readable.pause()` / `readable.resume()` API 对流进行自定义控制。
+
+#### stream.Readable 类
+
+##### 'close' 事件
+
+当流与底层数据源（例如：文件描述符）的联系被关闭时，发出 `close` 事件。该事件标识将不再触发其它事件，并且不会进行进一步的计算。
+
+并不是所有的 [可读流](#TODE) 都会触发 `close` 事件。
+
+##### 'data' 事件
+
+* `chunk` [<Buffer>](#TODE)|<String>|<any> 数据块。对于不再对象模式下操作的流，块将是字符串或 Buffer。对于出于对象模式的流，块可以是处理 `null` 之外的任何 JavaScript 值。
+在流准备好抛出数据块时，就会发出 `‘data’` 事件。每当通过调用 `readable.pipe()`、`readable.resume()`或将监视器回调函数绑定到 `'data'` 事件上等方式将流切换为流动模式时
