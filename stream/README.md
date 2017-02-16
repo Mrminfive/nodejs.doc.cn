@@ -404,4 +404,76 @@ write('hello', () => {
 ##### 'data' 事件
 
 * `chunk` [<Buffer>](#TODE)|<String>|<any> 数据块。对于不再对象模式下操作的流，块将是字符串或 Buffer。对于出于对象模式的流，块可以是处理 `null` 之外的任何 JavaScript 值。
-在流准备好抛出数据块时，就会发出 `‘data’` 事件。每当通过调用 `readable.pipe()`、`readable.resume()`或将监视器回调函数绑定到 `'data'` 事件上等方式将流切换为流动模式时
+
+在流准备好抛出数据块时，就会发出 `‘data’` 事件。每当通过调用 `readable.pipe()`、`readable.resume()`或将监视器回调函数绑定到 `'data'` 事件上等方式将流切换为流动模式时，将会发生这种情况。每当调用 `readable.read()` 方法并返回一个数据块时，`data` 事件也会被触发。（译者注：不理解的同学可以移步 [readable.read()] 方法）
+
+为尚显示暂停的流绑定 `'data'` 事件将会将流切换为流模式。一旦数据可用，数据就会被传递。
+
+如果使用 `readable.setEncoding()` 方法为流指定了默认编码，则监听器回调将用字符串传递数据块；否则将用 Buffer 传递数据。
+
+``` javascript
+const readable = getReadableStreamSomehow();
+readable.on('data', (chunk) => {
+	console.log(`Received ${chunk.length} bytes of data.`);
+});
+```
+
+##### 'end' 事件
+
+当流中无更多可被消费的数据时，触发 `end` 事件。
+
+注意：在数据没有被完全消耗完之前，`end` 事件是**不会被触发**。可以通过将流切换为流模式或通过反复调用 [stream.read()] 方法直到所有数据都被抽空。
+
+``` javascript
+const readable = getReadableStreamSomehow();
+readable.on('data', (chunk) => {
+	console.log(`Received ${chunk.length} bytes of data.`);
+});
+readable.on('end', () => {
+	console.log('There will be no more data.');
+});
+```
+
+##### 'error' 事件
+
+* [Error](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Error)
+
+`error` 事件可以在可读流实现的任何时间发出。通常，如果底层的流由于底层内部故障而不能生成数据或者当流尝试推送无效的数据块时，将会触发。
+
+监听器回调函数将接收到一个 `Error` 对象上。但是，流是可以在其它
+
+##### 'readable' 事件
+
+当数据可以从流中读取时触发 `'readable'` 事件。在某些情况下，假如未准备好，监听一个 `'readable'` 事件会使一些数据从底层系统被读出到内部缓冲区中。
+
+``` javascript
+const readable = getReadableStreamSomehow();
+readable.on('readable', () => {
+	// there is some data to read now
+});
+```
+
+一旦到达数据流的末端，在没有触发 `end` 事件之前，将会触发一次 `readable` 事件。
+
+实际上，`'readable'` 事件表示流的状态发生了改变：有新数据可用或这已经到达流的末端。在前一种情况下，调用 [stream.read()](#TODE) 方法将返回可用的数据。在后一种情况下，调用 [stream.read()](#TODE) 将返回 `null`。例如，下例中， foo.txt 是一个空文件：
+
+``` javascript
+const fs = require('fs');
+const rr = fs.createReadStream('foo.txt');
+rr.on('readable', () => {
+	console.log('readable: ', rr.read());
+});
+rr.on('end', () => {
+	console.log('end');
+});
+```
+
+运行此脚本的输出：
+``` javascript
+$ node test.js
+readable: null
+end
+```
+
+注意：一般来说，更推荐使用 `readable.pipe()` 和 `'data'` 事件机制，而不是使用 `'readable'` 事件。
+
