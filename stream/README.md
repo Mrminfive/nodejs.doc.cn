@@ -477,3 +477,110 @@ end
 
 注意：一般来说，更推荐使用 `readable.pipe()` 和 `'data'` 事件机制，而不是使用 `'readable'` 事件。
 
+
+##### readable.isPaused()
+
+* Returns: <Boolean>
+
+`readable.isPaused()` 方法返回可读流的当前操作状态。该方法的实现机制基于 `readable.pipe()` 方法。在大多数情况下，我们并不需要直接使用该方法。
+
+``` javascript
+const readable = new stream.Readable;
+
+readable.isPaused() // === false
+readable.pause()
+readable.isPaused() // === true
+readable.resume()
+readable.isPaused() // === false
+```
+
+##### readable.pause()
+
+* Returns: `this`
+
+`readable.pause()` 方法将使流动状态的流停止发出 `'data'` 事件，切换出流动模式。任何可用的数据将保留在内部缓存区中。
+
+``` javascript
+const readable = getReadableStreamSomehow();
+readable.on('data', (chunk) => {
+	console.log(`Received ${chunk.length} bytes of data.`);
+	readable.pause();
+	console.log('The will be no additional data for 1 second.');
+	setTimeout(() => {
+		console.log('Now data will start flowing again.');
+		readable.resume();
+	}, 1000);
+});
+```
+
+##### readable.pipe(destination[,options])
+
+* `destination` [<stream.Writable>](#TODE) 写入数据的目标
+* `options` <Object> 管道参数
+	* `end` <Boolean> 当读取结束时终止写入，默认为 `true`
+
+`readable.pipe()` 方法将 [可写流](#TODE) 附加到当前的可读流上，使其自动切换到流动模式，并将其所有数据推送到附加的 [可写流](#TODE) 中。该方法能自动控制流量以避免目标被快速读取的可读流所淹没。
+
+以下示例将所有可读流的数据导入名为 `file.txt` 的文件中：
+
+``` javascript
+const readable = getReadableStreamSomehow();
+const writable = fs.createWriteStream('file.txt');
+// All the data from readable goes into 'file.txt'
+readable.pipe(writable);
+```
+
+可以将多个可写流附加到单个可读流上。
+
+`readable.pipe()` 方法返回对目标流的应用，因此可以链式调用：
+
+``` javascript
+const r = fs.createReadStream('file.txt');
+const z = zlib.createGzip();
+const w = fs.createWriteStream('file.txt.gz');
+r.pipe(z).pipe(w);
+```
+
+默认情况下，当源数据可读流发出 ['end'](#TODE) 事件时，目标可写流的 [stream.end()](#TODE) 方法会被调用，以便目标可写流不再可写。要禁用此默认行为，可以将 `end` 选项设置为 `false`（译者注：{ end: false }），以保持目标可写流的开启状态。如下例所示：
+
+``` javascript
+reader.pipe(writer, { end: false });
+reader.on('end', () => {
+	writer.end('Goodbye\n');
+});
+```
+
+警告：如果可读流再处理期间发生了错误，则目标可写流是不会自动关闭的。如果发生错误，需要手动关闭每个流，以防止内存泄漏。
+
+注意：[process.stderr](#TODE) 和 [process.stdout](#TODE) 在进程结束前是不会关闭的，无论是否指定选项。
+
+##### readable.read([size])
+
+* `size` <Number> 可选参数，指定要读取的数据量
+* Return <String> | [<Buffer>](#TODE) | <Null>
+
+`readable.read()` 方法将一些数据从内部缓冲区中取出并返回。如果没有可读的数据，则返回 `null`。默认情况下，数据将用 Buffer 对象返回，除非使用 `readable.setEncoding()` 方法指定了编码或者流在对象模式下运行。
+
+如果你传了一个 `size` 参数，那么它就会返回多少字节的数据。如果 `size` 字节不可用，那么它将返回 `null`，除非已经到了数据末端，在这种情况下，它将返回保留在缓冲区中的数据（即使超过 `size` 字节）。
+
+如果你没有指定 `size` 参数，那么它就会返回内部缓冲区中的所有数据。
+
+该方法仅在暂停状态的流上才能调用。在流动模式下，`readable.read()` 方法将被自动调用，直到内部缓冲区完全排空。
+
+``` javascript
+const readable = getReadableStreamSomehow();
+readable.on('readable', () => {
+	var chunk;
+	while(null !== (chunk = readable.read())) {
+		console.log(`Received ${chunk.length} bytes of data.`);
+	}
+});
+```
+
+一般情况下，开发人员应避免使用 `readable` 事件和 `readable.read()` 方法，更建议使用 `readable.pipe()` 或 'data' 事件。
+
+对象模式下的可读流调用 `readable.read(size)` 将总是返回单个项，忽略 `size` 参数的值。
+
+注意：如果该方法返回了一个数据块，那么它也会触发 `'data'` 事件。
+
+请注意，在 ['end'](#TODE) 事件触发后调用 [stream.read([size])](#TODE) 将会返回 `null`，并且不会产生错误警告。
