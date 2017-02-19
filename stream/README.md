@@ -42,7 +42,7 @@ Node.js 中有四种基本的流类型：
 
 缓冲的数据量大小取决于传递到流构造函数种的 `highWaterMark` 选项。对于正常的流，`highWaterMark` 选项指定的是总字节数。对于在对象模式下操作的流，`higtWaterMark` 选项指定的是对象的总数。
 
-实现调用[steam.push(chunk)](#Tode)时，数据将被缓冲当在可读流中。如果流的消费者没有调用 `steam.read()`，数据将一直保留在内部队列中，直到它被消费。
+实现调用 [steam.push(chunk)](#Tode) 时，数据将被缓冲当在可读流中。如果流的消费者没有调用 `steam.read()`，数据将一直保留在内部队列中，直到它被消费。
 
 一旦内部用于读的缓冲区的总大小达到了由 `highWaterMark` 设定的阈值，则流将临时停止从底层资源读取数据，直到可以使用当前缓冲的数据（即流将停止调用内部的 `readable._read()` 方法去填充用于读的缓冲区）。
 
@@ -554,6 +554,30 @@ reader.on('end', () => {
 
 注意：[process.stderr](#TODE) 和 [process.stdout](#TODE) 在进程结束前是不会关闭的，无论是否指定选项。
 
+##### readable.unpipe([destination])
+
+* `destination` [<stream.Writable>](#TODE) 可选，指定解除导流的流。
+
+`readable.unpipe()` 方法用于移除使用 [readable.pipe()](#TODE) 方法附加的可写流。
+
+如果没有指定目标，将*移除所有*管道。
+
+如果指定了目标，但是没有与之建立联系，则不做任何处理。
+
+``` javascript
+const readable = getReadableStreamSomehow();
+const writable = fs.createWriteStream('file.txt');
+// All the data from readable goes into 'file.txt',
+// but only for the first second
+readable.pipe(writable);
+setTimeout(() => {
+	console.log('Stop writing to file.txt');
+	readable.unpipe(writable);
+	console.log('Manually close the file stream');
+	wirtable.end();
+}, 1000);
+```
+
 ##### readable.read([size])
 
 * `size` <Number> 可选参数，指定要读取的数据量
@@ -583,4 +607,114 @@ readable.on('readable', () => {
 
 注意：如果该方法返回了一个数据块，那么它也会触发 `'data'` 事件。
 
-请注意，在 ['end'](#TODE) 事件触发后调用 [stream.read([size])](#TODE) 将会返回 `null`，并且不会产生错误警告。
+注意，在 ['end'](#TODE) 事件触发后调用 [stream.read([size])](#TODE) 将会返回 `null`，并且不会产生错误警告。
+
+##### readable.resume()
+
+* Returns: `this`
+
+`readable.resume()` 方法将暂停状态的流切换到流动模式，使其继续发出 ['data'](#TODE) 事件。
+
+`readable.resume()` 方法可以用来完全消耗流中的数据，而不会实际处理任何数据，如下所示：
+
+``` javascript
+getReadableStreamSomehow()
+	.resume()
+	.on('end', () => {
+		console.log('Reached the end, but did not read anything');
+	});
+```
+
+##### readable.setEncoding(encoding)
+
+* `encoding` <String> 使用的编码
+* Returns: `this`
+
+`readable.setEncoding()` 方法用于设置从可读流中读取的数据的默认字符编码。
+
+设置编码会导致流数据以指定编码的字符串返回而不是 Buffer 对象。例如，调用 `readable.setEncoding('utf8')` 将导致输出数据被解释为 UTF8 格式，并做字符串传递。调用 `readable.setEncoding('hex')` 将导致数据以十六进制编码的字符串格式传递。
+
+该方法能妥善处理多字节字符，如果你直接取出 Buffer 并对它们调用 [buf.toString(encoding)](#TODE)，很可能会导致字节错位。如果你想要以字符串形式读取数据，请始终使用该方法。
+
+你还可以使用 `readable.setEncoding(null)` 完全禁用任何编码。如果你在处理二进制数据或将大型的多字节字符串分成多块时，这种做法将非常有用。
+
+``` javascript
+const readable = getReadableStreamSomehow();
+readable.setEncoding('utf8');
+readable.on('data', (chunk) => {
+	assert.equal(typeof chunk, 'string');
+	console.log('got %d charactres of string data', chunk.length);
+});
+```
+
+##### readable.unshift()
+
+* `chunk` [<Buffer>](#TODE) | <String> 回读队列开头的数据块
+
+该方法在某些情况下很有用，比如一个流正在被一个解析器消费，解析器需要“逆消费”某些刚从源中拉取出来的数据，以便流可以传递给其它消费者。
+
+注意，`stream.unshift(chunk)` 不能在 ['end'](#TODE) 事件触发后调用，否则将产生一个运行时错误。
+
+如果你发现你必须在你的程序中频繁调用 [stream.unshift(chunk)](#TODE) ，请考虑实现一个转换流（Transform）作为替代。（详见[面向流实现者的 API](#TODE)）
+
+``` javascript
+// Pull off a header delimited by \n\n
+// use unshift() if we get too much
+// Call the callback with (error, header, stream)
+const StringDecoder = require('string_decoder').StringDecoder;
+
+function parseHeader(stream, callback) {
+	stream.on('error', callback);
+	stream.on('readable', onReadable);
+
+	const decoder = new StringDecoder('utf8');
+	var header = '';
+
+	function onReadable() {
+		var chunk;
+		while(null !== (chunk = stream.read())) {
+			var str = decoder.write(chunk);
+			if (str.match('/n/n')) {
+				// found the header boundary
+				var split = str.split(/\n\n/);
+				header += split.shift();
+				const remaining = split.join('\n\n');
+				const bug = Buffer.from(remaining, 'utf8');
+				stream.removeListener('error', callback);
+				// set the readable listener before unshifting
+				stream.removeListener('readable', onReadable);
+				if (buf.length)
+					stream.unshift(buf);
+				// now the body of the message can be read form the stream.
+				callback(null, header, stream);
+			} else {
+				// still reading the header.
+				ehader += str;
+			}
+		}
+	}
+}
+```
+
+请注意，不像 [stream.push(chunk)](#TODE) 那样，`stream.unshift(chunk)` 不会通过重置流的内部读取状态结束读取过程。如果在读取过程（比如，在一个 [stream._read()](#TODE) 内部实现一个自定义流）中调用 `readable.unshift()` 将导致意想不到的结果。在调用 `readable.unshift()` 后立即调用 [stream.push('')](#TODE) 会适当地重置读取状态，然而最好简单地避免在执行一个读出过程中调用 unshift() 。
+
+##### readable.wrap(stream)
+
+* `stream` [<Stream>](#TODE) 一个“旧式”可读流
+
+Node.js v0.10 版本之前的流并未实现现今所有流 API。（更多信息详见[“兼容性”章节](#TODE)。）
+
+如果你正在使用一个早期版本的 Node.js 库，它会触发 ['data'](#TODE) 事件并且有一个仅作查询用途的 [stream.pause()](#TODE) 方法，那么你可以使用 `readable.wrap()` 方法来创建一个使用旧式流作为数据源的[可读流](#TODE)。
+
+例如：
+
+``` javascript
+const OldReader = require(./old-api-module.js).OldReader;
+const Readanle = require('stream.Readable');
+const oreader = new OldReader;
+const myReader = new Readable().wrap(oleader);
+
+myReader.on('readable', () => {
+	myReader.read(); // etc.
+});
+```
