@@ -134,32 +134,32 @@ Node.js 中有四种基本的流类型：
 const http  = require('http');
 
 const server = http.createServer((req, res) => {
-	// req is an http.IncomingMessage, which is a Readable Stream
-	// res is an http.ServerResponse, whice is a Writable Stream
+  // req is an http.IncomingMessage, which is a Readable Stream
+  // res is an http.ServerResponse, whice is a Writable Stream
 
-	let body = '';
-	// Get the data as utf8 strings.
-	// If an encoding is not set, Buffer objects will be received.
-	req.setEncoding('utf8');
+  let body = '';
+  // Get the data as utf8 strings.
+  // If an encoding is not set, Buffer objects will be received.
+  req.setEncoding('utf8');
 
-	// Readable streams emit 'data' events once a listener is added
-	req.on('data', (chunk) => {
-		body += chunk;
-	});
+  // Readable streams emit 'data' events once a listener is added
+  req.on('data', (chunk) => {
+    body += chunk;
+  });
 
-	// the end event indicates that the entire body has been received
-	req.on('end', () => {
-		try {
-			const data = JSON.parse(body);
-			// write back something interesting to the user:
-			res.write(typeof data);
-			res.end();
-		} catch (er) {
-			// uh oh! bad json!
-			res.statusCode = 400;
-			return res.end(`error: ${er.message}`);
-		}
-	});
+  // the end event indicates that the entire body has been received
+  req.on('end', () => {
+    try {
+      const data = JSON.parse(body);
+      // write back something interesting to the user:
+      res.write(typeof data);
+      res.end();
+    } catch (er) {
+      // uh oh! bad json!
+      res.statusCode = 400;
+      return res.end(`error: ${er.message}`);
+    }
+  });
 });
 
 server.listen(1337);
@@ -228,29 +228,29 @@ myStream.end('done writing data');
 // Write the data to the supplied writable stream one million times.
 // Be attentive to back-pressure.
 function writeOneMillionTimes(writer, data, encoding, callback) {
-	let i = 1000000;
-	write();
+  let i = 1000000;
+  write();
 
-	function write() {
-		var ok = true;
-		do {
-			i--;
-			if (i === 0) {
-				// last time!
-				writer.write(data, encoding, callback);
-			} else {
-				// see if we should continue, or wait
-				// don't pass the callback, because we're not done yet.
-				ok = writer.write(data, encoding);
-			}
-		} while (i > 0 && ok);
+  function write() {
+    var ok = true;
+    do {
+      i--;
+      if (i === 0) {
+        // last time!
+        writer.write(data, encoding, callback);
+      } else {
+        // see if we should continue, or wait
+        // don't pass the callback, because we're not done yet.
+        ok = writer.write(data, encoding);
+      }
+    } while (i > 0 && ok);
 
-		if (i > 0) {
-			// had to stop early!
-			// write some more once it drains
-			writer.once('drain', write);
-		}
-	}
+    if (i > 0) {
+      // had to stop early!
+      // write some more once it drains
+      writer.once('drain', write);
+    }
+  }
 }
 ```
 
@@ -267,11 +267,11 @@ function writeOneMillionTimes(writer, data, encoding, callback) {
 ``` javascript
 const writer = getWritableStreamSomehow();
 for (var i = 0; i < 100; i++) {
-	writer.write(`hello, #${i}!\n`);
+  writer.write(`hello, #${i}!\n`);
 }
 writer.end('This is the end\n');
 writer.on('finish', () => {
-	console.error('All writes are now complete.');
+  console.error('All writes are now complete.');
 })
 ```
 
@@ -285,8 +285,8 @@ writer.on('finish', () => {
 const writer = getWritableStreamSomehow();
 const reader = getReadableStreamSomehow();
 writer.on('pipe', (src) => {
-	console.error('something is piping into the writer');
-	assert.equal(src, reader);
+  console.error('something is piping into the writer');
+  assert.equal(src, reader);
 });
 reader.pipe(writer);
 ```
@@ -301,8 +301,8 @@ reader.pipe(writer);
 const writer = getWritableStreamSomehow();
 const reader = getReadableStreamSomehow();
 writer.on('unpipe', (src) => {
-	console.error('Something has stopped piping into the writer.');
-	assert.equal(src, reader);
+  console.error('Something has stopped piping into the writer.');
+  assert.equal(src, reader);
 });
 reader.pipe(writer);
 reader.unpipe(writer);
@@ -334,15 +334,15 @@ stream.write('some ');
 stream.cord();
 stream.write('data ');
 process.nextTick(() => {
-	stream.uncork();
-	// 在第二次调用 uncork() 之前不会写入数据
-	stream.uncork();
+  stream.uncork();
+  // 在第二次调用 uncork() 之前不会写入数据
+  stream.uncork();
 });
 ```
 
 ##### writable.end([chunk][,encoding][,callback])
 
-* `chunk` <String>|<Buffer>|<any> 要写入的可选数据。对于不以对象模式操作的流，`chunk` 必须是字符串或 [Buffer](#TODE)。对于对象模式的流，`chunk` 可以使除 `null` 外的任何 JavaScript 值。
+* `chunk` < String > | < Buffer > | < any > 要写入的可选数据。对于不以对象模式操作的流，`chunk` 必须是字符串或 [Buffer](#TODE)。对于对象模式的流，`chunk` 可以使除 `null` 外的任何 JavaScript 值。
 * `encoding` <String> 编码，如果 `chunk` 是字符串将使用该编码格式
 * `callback` <Function> 可选的当流完成时的回调函数
 
@@ -360,17 +360,17 @@ file.end('world!');
 
 ##### writable.setDefaultEncoding(encoding)
 
-* `encoding` <String> 新的默认编码
+* `encoding` < String > 新的默认编码
 * Returns: `this`
 
 `writable.setDefaultEncoding()` 方法用于设置一个[可写流](#streamwritable%E7%B1%BB)的默认 `encoding`。
 
 ##### writable.write(chunk[,encoding][,callback])
 
-* `chunk` <String>|<Buffer> 写入的数据
-* `encoding` <String> 编码，如果 `chunk` 是字符串将使用该编码格式
-* `callback` <Function> 可选的当流完成时的回调函数
-* Returns: <Bollean> 如果返回 `false` 表示流希望在等待 `drain` 事件发出后再继续调用代码去写入附加数据，否则返回 `true`。
+* `chunk` < String >|< Buffer > 写入的数据
+* `encoding` < String > 编码，如果 `chunk` 是字符串将使用该编码格式
+* `callback` < Function > 可选的当流完成时的回调函数
+* Returns: < Bollean > 如果返回 `false` 表示流希望在等待 `drain` 事件发出后再继续调用代码去写入附加数据，否则返回 `true`。
 
 `writable.write()` 方法将一些数据写入流中，并在数据完全处理后调用提供的回调函数。如果发生错误，则回调*可能会也可能不会*将错误作为第一个参数调用。为了检测写入错误，请监听 'error' 事件。
 
@@ -384,16 +384,16 @@ file.end('world!');
 
 ``` javascript
 function write(data, cb) {
-	if (!stream.write(data)) {
-		stream.once('drain', cb);
-	} else {
-		process.nextTick(cb);
-	}
+  if (!stream.write(data)) {
+    stream.once('drain', cb);
+  } else {
+    process.nextTick(cb);
+  }
 }
 
 // Wait for cb to be called before doing any other write.
 write('hello', () => {
-	console.log('write completed, do more writes now');
+  console.log('write completed, do more writes now');
 });
 ```
 
@@ -476,7 +476,7 @@ write('hello', () => {
 
 ##### 'data' 事件
 
-* `chunk` <[Buffer](#TODE)> | <String> | <any> 数据块。对于不再对象模式下操作的流，块将是字符串或 Buffer。对于出于对象模式的流，块可以是处理 `null` 之外的任何 JavaScript 值。
+* `chunk` <[Buffer](#TODE)> | < String > | < any > 数据块。对于不再对象模式下操作的流，块将是字符串或 Buffer。对于出于对象模式的流，块可以是处理 `null` 之外的任何 JavaScript 值。
 
 在流准备好抛出数据块时，就会发出 `‘data’` 事件。每当通过调用 `readable.pipe()`、`readable.resume()`或将监视器回调函数绑定到 `'data'` 事件上等方式将流切换为流动模式时，将会发生这种情况。每当调用 `readable.read()` 方法并返回一个数据块时，`data` 事件也会被触发。（译者注：不理解的同学可以移步 [readable.read()] 方法）
 
@@ -487,7 +487,7 @@ write('hello', () => {
 ``` javascript
 const readable = getReadableStreamSomehow();
 readable.on('data', (chunk) => {
-	console.log(`Received ${chunk.length} bytes of data.`);
+  console.log(`Received ${chunk.length} bytes of data.`);
 });
 ```
 
@@ -500,10 +500,10 @@ readable.on('data', (chunk) => {
 ``` javascript
 const readable = getReadableStreamSomehow();
 readable.on('data', (chunk) => {
-	console.log(`Received ${chunk.length} bytes of data.`);
+  console.log(`Received ${chunk.length} bytes of data.`);
 });
 readable.on('end', () => {
-	console.log('There will be no more data.');
+  console.log('There will be no more data.');
 });
 ```
 
@@ -522,7 +522,7 @@ readable.on('end', () => {
 ``` javascript
 const readable = getReadableStreamSomehow();
 readable.on('readable', () => {
-	// there is some data to read now
+  // there is some data to read now
 });
 ```
 
@@ -534,10 +534,10 @@ readable.on('readable', () => {
 const fs = require('fs');
 const rr = fs.createReadStream('foo.txt');
 rr.on('readable', () => {
-	console.log('readable: ', rr.read());
+  console.log('readable: ', rr.read());
 });
 rr.on('end', () => {
-	console.log('end');
+  console.log('end');
 });
 ```
 
@@ -553,7 +553,7 @@ end
 
 ##### readable.isPaused()
 
-* Returns: <Boolean>
+* Returns: < Boolean >
 
 `readable.isPaused()` 方法返回可读流的当前操作状态。该方法的实现机制基于 `readable.pipe()` 方法。在大多数情况下，我们并不需要直接使用该方法。
 
@@ -576,21 +576,21 @@ readable.isPaused() // === false
 ``` javascript
 const readable = getReadableStreamSomehow();
 readable.on('data', (chunk) => {
-	console.log(`Received ${chunk.length} bytes of data.`);
-	readable.pause();
-	console.log('The will be no additional data for 1 second.');
-	setTimeout(() => {
-		console.log('Now data will start flowing again.');
-		readable.resume();
-	}, 1000);
+  console.log(`Received ${chunk.length} bytes of data.`);
+  readable.pause();
+  console.log('The will be no additional data for 1 second.');
+  setTimeout(() => {
+    console.log('Now data will start flowing again.');
+    readable.resume();
+  }, 1000);
 });
 ```
 
 ##### readable.pipe(destination[,options])
 
 * `destination` <[stream.Writable](#streamwritable%E7%B1%BB)> 写入数据的目标
-* `options` <Object> 管道参数
-	* `end` <Boolean> 当读取结束时终止写入，默认为 `true`
+* `options` < Object > 管道参数
+  * `end` < Boolean > 当读取结束时终止写入，默认为 `true`
 
 `readable.pipe()` 方法将 [可写流](#streamwritable%E7%B1%BB) 附加到当前的可读流上，使其自动切换到流动模式，并将其所有数据推送到附加的 [可写流](#streamwritable%E7%B1%BB) 中。该方法能自动控制流量以避免目标被快速读取的可读流所淹没。
 
@@ -619,7 +619,7 @@ r.pipe(z).pipe(w);
 ``` javascript
 reader.pipe(writer, { end: false });
 reader.on('end', () => {
-	writer.end('Goodbye\n');
+  writer.end('Goodbye\n');
 });
 ```
 
@@ -644,17 +644,17 @@ const writable = fs.createWriteStream('file.txt');
 // but only for the first second
 readable.pipe(writable);
 setTimeout(() => {
-	console.log('Stop writing to file.txt');
-	readable.unpipe(writable);
-	console.log('Manually close the file stream');
-	wirtable.end();
+  console.log('Stop writing to file.txt');
+  readable.unpipe(writable);
+  console.log('Manually close the file stream');
+  wirtable.end();
 }, 1000);
 ```
 
 ##### readable.read([size])
 
-* `size` <Number> 可选参数，指定要读取的数据量
-* Return <String> | <[Buffer](#TODE)> | <Null>
+* `size` < Number > 可选参数，指定要读取的数据量
+* Return < String > | <[Buffer](#TODE)> | < Null >
 
 `readable.read()` 方法将一些数据从内部缓冲区中取出并返回。如果没有可读的数据，则返回 `null`。默认情况下，数据将用 Buffer 对象返回，除非使用 `readable.setEncoding()` 方法指定了编码或者流在对象模式下运行。
 
@@ -667,10 +667,10 @@ setTimeout(() => {
 ``` javascript
 const readable = getReadableStreamSomehow();
 readable.on('readable', () => {
-	var chunk;
-	while(null !== (chunk = readable.read())) {
-		console.log(`Received ${chunk.length} bytes of data.`);
-	}
+  var chunk;
+  while(null !== (chunk = readable.read())) {
+    console.log(`Received ${chunk.length} bytes of data.`);
+  }
 });
 ```
 
@@ -692,15 +692,15 @@ readable.on('readable', () => {
 
 ``` javascript
 getReadableStreamSomehow()
-	.resume()
-	.on('end', () => {
-		console.log('Reached the end, but did not read anything');
-	});
+  .resume()
+  .on('end', () => {
+    console.log('Reached the end, but did not read anything');
+  });
 ```
 
 ##### readable.setEncoding(encoding)
 
-* `encoding` <String> 使用的编码
+* `encoding` < String > 使用的编码
 * Returns: `this`
 
 `readable.setEncoding()` 方法用于设置从可读流中读取的数据的默认字符编码。
@@ -715,8 +715,8 @@ getReadableStreamSomehow()
 const readable = getReadableStreamSomehow();
 readable.setEncoding('utf8');
 readable.on('data', (chunk) => {
-	assert.equal(typeof chunk, 'string');
-	console.log('got %d charactres of string data', chunk.length);
+  assert.equal(typeof chunk, 'string');
+  console.log('got %d charactres of string data', chunk.length);
 });
 ```
 
@@ -737,35 +737,35 @@ readable.on('data', (chunk) => {
 const StringDecoder = require('string_decoder').StringDecoder;
 
 function parseHeader(stream, callback) {
-	stream.on('error', callback);
-	stream.on('readable', onReadable);
+  stream.on('error', callback);
+  stream.on('readable', onReadable);
 
-	const decoder = new StringDecoder('utf8');
-	var header = '';
+  const decoder = new StringDecoder('utf8');
+  var header = '';
 
-	function onReadable() {
-		var chunk;
-		while(null !== (chunk = stream.read())) {
-			var str = decoder.write(chunk);
-			if (str.match('/n/n')) {
-				// found the header boundary
-				var split = str.split(/\n\n/);
-				header += split.shift();
-				const remaining = split.join('\n\n');
-				const bug = Buffer.from(remaining, 'utf8');
-				stream.removeListener('error', callback);
-				// set the readable listener before unshifting
-				stream.removeListener('readable', onReadable);
-				if (buf.length)
-					stream.unshift(buf);
-				// now the body of the message can be read form the stream.
-				callback(null, header, stream);
-			} else {
-				// still reading the header.
-				ehader += str;
-			}
-		}
-	}
+  function onReadable() {
+    var chunk;
+    while(null !== (chunk = stream.read())) {
+      var str = decoder.write(chunk);
+      if (str.match('/n/n')) {
+        // found the header boundary
+        var split = str.split(/\n\n/);
+        header += split.shift();
+        const remaining = split.join('\n\n');
+        const bug = Buffer.from(remaining, 'utf8');
+        stream.removeListener('error', callback);
+        // set the readable listener before unshifting
+        stream.removeListener('readable', onReadable);
+        if (buf.length)
+          stream.unshift(buf);
+        // now the body of the message can be read form the stream.
+        callback(null, header, stream);
+      } else {
+        // still reading the header.
+        ehader += str;
+      }
+    }
+  }
 }
 ```
 
@@ -773,7 +773,7 @@ function parseHeader(stream, callback) {
 
 ##### readable.wrap(stream)
 
-* `stream` <[Stream]>(#stream%E6%B5%81) 一个“旧式”可读流
+* `stream` <[Stream](#stream%E6%B5%81)> 一个“旧式”可读流
 
 Node.js v0.10 版本之前的流并未实现现今所有流 API。（更多信息详见[“兼容性”章节](#%E8%A1%A5%E5%85%85%E5%86%85%E5%AE%B9)。）
 
@@ -788,7 +788,7 @@ const oreader = new OldReader;
 const myReader = new Readable().wrap(oleader);
 
 myReader.on('readable', () => {
-	myReader.read(); // etc.
+  myReader.read(); // etc.
 });
 ```
 
@@ -824,9 +824,9 @@ Transfrom 流的实例包括：
 const Writable = require('stream').Writable;
 
 class MyWritable extends Writable {
-	constructor(options) {
-		super(options);
-	}
+  constructor(options) {
+    super(options);
+  }
 }
 ```
 
@@ -851,9 +851,9 @@ class MyWritable extends Writable {
 const Writable = require('stream').Writable;
 
 const myWritable = new Writable({
-	write(chunk, encoding, callback) {
-		// ...
-	}
+  write(chunk, encoding, callback) {
+    // ...
+  }
 });
 ```
 
@@ -865,12 +865,12 @@ const myWritable = new Writable({
 
 #### 构造器：new stream.Writable([options])
 
-* `options` <Object>
-	* `highWaterMark` <Number> [stream.write()](#writablewritechunkencodingcallback) 开始返回 `false` 时的 Buffer 大小。 默认为16384（16 kb），或对于支持对象模式的流为16。
-	* `decodeStrings` <Boolean> 在传递给 [stream._write()](#writable_writechunk-encoding-callback) 前是否解码字符串为 Buffer。默认为 `true`。
-	* `objectMode` <Boolean> [stream.wirte(anyObj)](#writablewritechunkencodingcallback) 是否是有效操作（译者注：即是否支持对象模式），如果设置，则可以写入任意 Javascript 值，而不是限定为 `Buffer` / `String` 数据。默认为 `false`.
-	* `write` <Function> 用于实现 [stream._write()](#writable_writechunk-encoding-callback) 方法。
-	* `writev` <Function> 用于实现 [stream._writev()](#writable_writevchunks-callback) 方法。
+* `options` < Object >
+  * `highWaterMark` < Number > [stream.write()](#writablewritechunkencodingcallback) 开始返回 `false` 时的 Buffer 大小。 默认为16384（16 kb），或对于支持对象模式的流为16。
+  * `decodeStrings` < Boolean > 在传递给 [stream._write()](#writable_writechunk-encoding-callback) 前是否解码字符串为 Buffer。默认为 `true`。
+  * `objectMode` < Boolean > [stream.wirte(anyObj)](#writablewritechunkencodingcallback) 是否是有效操作（译者注：即是否支持对象模式），如果设置，则可以写入任意 Javascript 值，而不是限定为 `Buffer` / `String` 数据。默认为 `false`.
+  * `write` < Function > 用于实现 [stream._write()](#writable_writechunk-encoding-callback) 方法。
+  * `writev` < Function > 用于实现 [stream._writev()](#writable_writevchunks-callback) 方法。
 
 例如：
 
@@ -878,10 +878,10 @@ const myWritable = new Writable({
 const Writable = require('stream').Writable;
 
 class MyWritable extends Writable {
-	constructor(options) {
-		// Calls the strean.Writable() constructor
-		super(options);
-	}
+  constructor(options) {
+    // Calls the strean.Writable() constructor
+    super(options);
+  }
 }
 ```
 
@@ -892,10 +892,10 @@ const Writable = require('stream').Writable;
 const util = require('util');
 
 function MyWritable(options) {
-	if (!(this instanceof MyWritable)) {
-		return new MyWritable(options);
-	}
-	Writable.call(this, options);
+  if (!(this instanceof MyWritable)) {
+    return new MyWritable(options);
+  }
+  Writable.call(this, options);
 }
 util.inherits(MyWritable, Writable);
 ```
@@ -906,20 +906,20 @@ util.inherits(MyWritable, Writable);
 const Writable = require('stream').Writable;
 
 const myWritable = new Wirtable({
-	write(chunk, encoding, callback) {
-		// ...
-	}
-	writev(chunk, callback) {
-		// ...
-	}
+  write(chunk, encoding, callback) {
+    // ...
+  }
+  writev(chunk, callback) {
+    // ...
+  }
 });
 ```
 
 #### writable._write(chunk, encoding, callback)
 
-* `chunk` <Buffer> | <String> 要写入的块，*默认*为 Buffer，除非 `decodeStrings` 设置为 `false`。
-* `encoding` <String> 如果块是一个字符串，则 `encoding` 是该字符串的字符编码。 如果块是 Buffer，或者如果流以对象模式操作，则会忽略该编码。
-* `callback` <Function> 当为所提供的块完成处理时，调用此函数（可选择使用错误参数）。
+* `chunk` < Buffer > | < String > 要写入的块，*默认*为 Buffer，除非 `decodeStrings` 设置为 `false`。
+* `encoding` < String > 如果块是一个字符串，则 `encoding` 是该字符串的字符编码。 如果块是 Buffer，或者如果流以对象模式操作，则会忽略该编码。
+* `callback` < Function > 当为所提供的块完成处理时，调用此函数（可选择使用错误参数）。
 
 所有可写流实现必须提供一个 [writable._write()](#writable_writechunk-encoding-callback) 方法来将数据发送到底层资源。
 
@@ -938,8 +938,8 @@ const myWritable = new Wirtable({
 
 #### writable._writev(chunks, callback)
 
-* `chunks` <Array> 要写入的所有块。每个块具有以下的格式：{ chunk: ..., encoding: ... }
-* `callback` <Function> 当为所提供的块完成处理时，调用此函数（可选择使用错误参数）。
+* `chunks` < Array > 要写入的所有块。每个块具有以下的格式：{ chunk: ..., encoding: ... }
+* `callback` < Function > 当为所提供的块完成处理时，调用此函数（可选择使用错误参数）。
 
 *注意：*此函数**不能直接由应用程序代码调用**。 它应该由子类实现，并且仅由内部 Writable 类方法调用。
 
@@ -955,13 +955,13 @@ const myWritable = new Wirtable({
 const Writable = require('stream').Writable;
 
 const myWritable = new Writable({
-	write(chunk, encoding, callback) {
-		if (chunk.toString().indexOf('a') >= 0) {
-			callback(new Error('chunk is invalid'));
-		} else {
-			callback();
-		}
-	}
+  write(chunk, encoding, callback) {
+    if (chunk.toString().indexOf('a') >= 0) {
+      callback(new Error('chunk is invalid'));
+    } else {
+      callback();
+    }
+  }
 });
 ```
 
@@ -973,17 +973,17 @@ const myWritable = new Writable({
 const Writable = require('stream').Writable;
 
 class MyWritable extends Writable {
-	constructor(options) {
-		super(options);
-	}
+  constructor(options) {
+    super(options);
+  }
 
-	_write(chunk, encoding, callback) {
-		if (chunk.toString().indexOf('a') >= 0) {
-			callback(new Error('chunk is invalid'));
-		} else {
-			callback();
-		}
-	}
+  _write(chunk, encoding, callback) {
+    if (chunk.toString().indexOf('a') >= 0) {
+      callback(new Error('chunk is invalid'));
+    } else {
+      callback();
+    }
+  }
 }
 ```
 
@@ -996,11 +996,11 @@ class MyWritable extends Writable {
 
 #### new stream.Readable([options])
 
-* `options` <Object>
-	* `highWaterMark` <Number> 停止从底层资源读取能够存储在内部缓冲区的最大字节数。 默认为16384（16 kb），或对于支持对象模式的流为16。
-	* `encoding` <String> 如果指定，则缓冲区将使用指定的编码字符串解码。默认为 `null`。
-	* `objectMode` <Boolean> 否支持对象模式，如果设置，则意味着 [stream.read(n)](#readablereadsize) 返回单个值而不是一个大小为 n 的 Buffer。默认为 `false`。
-	* `read` <Function> 用于实现 [stream._read()](#readable_readsize) 方法。
+* `options` < Object >
+  * `highWaterMark` < Number > 停止从底层资源读取能够存储在内部缓冲区的最大字节数。 默认为16384（16 kb），或对于支持对象模式的流为16。
+  * `encoding` < String > 如果指定，则缓冲区将使用指定的编码字符串解码。默认为 `null`。
+  * `objectMode` < Boolean > 否支持对象模式，如果设置，则意味着 [stream.read(n)](#readablereadsize) 返回单个值而不是一个大小为 n 的 Buffer。默认为 `false`。
+  * `read` < Function > 用于实现 [stream._read()](#readable_readsize) 方法。
 
 例如：
 
@@ -1008,10 +1008,10 @@ class MyWritable extends Writable {
 const Readable = require('stream').Readable;
 
 class MyReadable extends Readable {
-	constructor(options) {
-		// Calls the stream.Readable(options) constructor
-		super(options);
-	}
+  constructor(options) {
+    // Calls the stream.Readable(options) constructor
+    super(options);
+  }
 }
 ```
 
@@ -1022,10 +1022,10 @@ const Readable = require('stream').Readable;
 const util = require('util');
 
 function MyReadable(options) {
-	if (!(this instanceof MyReadable)) {
-		return new MyReadable(options);
-	}
-	Readable.call(this, options);
+  if (!(this instanceof MyReadable)) {
+    return new MyReadable(options);
+  }
+  Readable.call(this, options);
 }
 util.inherits(MyReadable, Readable);
 ```
@@ -1036,15 +1036,15 @@ util.inherits(MyReadable, Readable);
 const Readable = require('stream').Readable;
 
 const myReadable = new Readable({
-	read(size) {
-		// ...
-	}
+  read(size) {
+    // ...
+  }
 });
 ```
 
 #### readable._read(size)
 
-* `size` <Number> 异步读取的字节数
+* `size` < Number > 异步读取的字节数
 
 *注意：*此函数**不能直接由应用程序代码调用**。 它应该由子类实现，并且仅由内部 Readable 类方法调用。
 
@@ -1060,9 +1060,9 @@ const myReadable = new Readable({
 
 #### readable.push(chunk[, encoding])
 
-* `chunk` <Buffer> | <null> | <String> 要推入读取队列的数据块
-* `encoding` <String> String 类型的数据块的编码。必须是有效的 Buffer 编码，例如：'urf8'或'ascii'。
-* Returns <Boolean> 返回是否可以继续推送数据块
+* `chunk` < Buffer > | < null > | < String > 要推入读取队列的数据块
+* `encoding` < String > String 类型的数据块的编码。必须是有效的 Buffer 编码，例如：'urf8'或'ascii'。
+* Returns < Boolean > 返回是否可以继续推送数据块
 
 当 `chunk` 是 Buffer 或字符串时，数据块将被添加到内部队列以供流的用户使用。 将块传递为 `null` 表示流的结束（EOF），之后不能写入更多的数据。
 
@@ -1078,29 +1078,29 @@ const myReadable = new Readable({
 // an `onend` member that gets called when the data is over.
 
 class SourceWrapper extends Readable {
-	constructor(options) {
-		super(options);
+  constructor(options) {
+    super(options);
 
-		this._source = getLowlevelSourceObject();
+    this._source = getLowlevelSourceObject();
 
-		// Every time there's data, push it into the internal buffer.
-		this._source.ondata = (chunk) => {
-			// if push() returns false, then stop reading from source
-			if (this.push(chunk))
-				this._source.readStop();
-		};
+    // Every time there's data, push it into the internal buffer.
+    this._source.ondata = (chunk) => {
+      // if push() returns false, then stop reading from source
+      if (this.push(chunk))
+        this._source.readStop();
+    };
 
-		// When the source ends, push the EOF-signaling `null` chunk
-		this._source.onend(() => {
-			this.push(null);
-		});
-	}
+    // When the source ends, push the EOF-signaling `null` chunk
+    this._source.onend(() => {
+      this.push(null);
+    });
+  }
 
-	// _read will be called when the stream wants to pull more data in
-	// the advisory size argument is ignored in this case.
-	_read(size) {
-		this._source.readStart();
-	}
+  // _read will be called when the stream wants to pull more data in
+  // the advisory size argument is ignored in this case.
+  _read(size) {
+    this._source.readStart();
+  }
 }
 ```
 
@@ -1116,14 +1116,14 @@ class SourceWrapper extends Readable {
 const Readable = require('stream').Readable;
 
 const myReadable = new Readable({
-	read(size) {
-		if (let err = checkSomeErrorCondition()) {
-			process.nextTick(() => this.emit('error', err));
-			return;
-		}
+  read(size) {
+    if (let err = checkSomeErrorCondition()) {
+      process.nextTick(() => this.emit('error', err));
+      return;
+    }
 
-		// do some work
-	}
+    // do some work
+  }
 });
 ```
 
@@ -1135,22 +1135,22 @@ const myReadable = new Readable({
 const Readable = require('stream').Readable;
 
 class Counter extends Readable {
-	constructor(opt) {
-		super(opt);
-		this._max = 1000000;
-		this._index = 1;
-	}
+  constructor(opt) {
+    super(opt);
+    this._max = 1000000;
+    this._index = 1;
+  }
 
-	_read() {
-		var i = this._index++;
-		if (i > thie._max)
-			this.push(null);
-		else {
-			var str = '' + i;
-			var buf = Buffer.form(str, 'ascii');
-			this.push(buf);
-		}
-	}
+  _read() {
+    var i = this._index++;
+    if (i > thie._max)
+      this.push(null);
+    else {
+      var str = '' + i;
+      var buf = Buffer.form(str, 'ascii');
+      this.push(buf);
+    }
+  }
 }
 ```
 
@@ -1167,10 +1167,10 @@ class Counter extends Readable {
 
 #### new Stream.Duplex(options)
 
-* `options` <Object> 传递给 `Readable` 和 `Writable` 构造函数。同时还有以下字段：
-	* `allowHalfOpen` <Boolean> 默认为 `true`。如果设置为 `false`，那么当写入结束后流将自动结束读取，反之亦然。
-	* `readableObjectMode` <Boolean> 默认为 `false`。用于设置流读取端的 `objectMode` 。如果读取端 `objectMode` 设置为 `true`，该字段将无效。
-	* `writableObjectMode` <Boolean> 默认为 `false`。用于设置流写入端的 `objectMode` 。如果写入端 `objectMode` 设置为 `true`，该字段将无效。
+* `options` < Object > 传递给 `Readable` 和 `Writable` 构造函数。同时还有以下字段：
+  * `allowHalfOpen` < Boolean > 默认为 `true`。如果设置为 `false`，那么当写入结束后流将自动结束读取，反之亦然。
+  * `readableObjectMode` < Boolean > 默认为 `false`。用于设置流读取端的 `objectMode` 。如果读取端 `objectMode` 设置为 `true`，该字段将无效。
+  * `writableObjectMode` < Boolean > 默认为 `false`。用于设置流写入端的 `objectMode` 。如果写入端 `objectMode` 设置为 `true`，该字段将无效。
 
 例子如下：
 
@@ -1178,9 +1178,9 @@ class Counter extends Readable {
 const Duplex = require('stream').Duplex;
 
 class MyDuple extends Duplex {
-	constructor(options) {
-		super(options);
-	}
+  constructor(options) {
+    super(options);
+  }
 }
 ```
 
@@ -1191,10 +1191,10 @@ const Duplex = require('stream').Duplex;
 const util = require('util');
 
 function MyDuplex(options) {
-	if (!(this instanceof MyDuple)) {
-		return new MyDuplex(options);
-	}
-	Duplex.call(this, options);
+  if (!(this instanceof MyDuple)) {
+    return new MyDuplex(options);
+  }
+  Duplex.call(this, options);
 }
 util.inherits(MyDuplex, Duplex);
 ```
@@ -1205,12 +1205,12 @@ util.inherits(MyDuplex, Duplex);
 const Duplex = require('stream').Duplex;
 
 const myDuplex = new Duplex({
-	read(size) {
-		// ...
-	},
-	write(chunk, encoding, callback) {
-		// ...
-	}
+  read(size) {
+    // ...
+  },
+  write(chunk, encoding, callback) {
+    // ...
+  }
 });
 ```
 
@@ -1223,24 +1223,24 @@ const Duplex = require('stream').Duplex;
 const kSource = Symbol('source');
 
 class MyDuplex extends Duplex {
-	constructor(source, options) {
-		super(options);
-		this[kSource] = source;
-	}
+  constructor(source, options) {
+    super(options);
+    this[kSource] = source;
+  }
 
-	_write(chunk, encoding, callback) {
-		// The underlying source only deals with strings
-		if (Buffer.isBuffer(chunk))
-			chunk = chunk.toString();
-		this[kSource].wirteSomeData(chunk);
-		callback();
-	}
+  _write(chunk, encoding, callback) {
+    // The underlying source only deals with strings
+    if (Buffer.isBuffer(chunk))
+      chunk = chunk.toString();
+    this[kSource].wirteSomeData(chunk);
+    callback();
+  }
 
-	_read(size) {
-		this[kSource].fetchSomeData(size, (data, encoding) => {
-			this.push(Buffer.form(data, encoding));
-		});
-	}
+  _read(size) {
+    this[kSource].fetchSomeData(size, (data, encoding) => {
+      this.push(Buffer.form(data, encoding));
+    });
+  }
 }
 ```
 
@@ -1257,18 +1257,18 @@ const Transform = require('stream').Transform;
 
 // All Transform streams are also Duplex Streams
 const myTransform = new Transform({
-	writableObjectMode: true,
+  writableObjectMode: true,
 
-	transform(chunk, encoding, callback) {
-		// Coerce the chunk to a number if necessary
-		chunk |= 0;
+  transform(chunk, encoding, callback) {
+    // Coerce the chunk to a number if necessary
+    chunk |= 0;
 
-		// Transform the chunk into something else.
-		const data = chunk.toString(16);
+    // Transform the chunk into something else.
+    const data = chunk.toString(16);
 
-		// Push the data onto the readable queue.
-		callback(null, '0'.repeat(data.length % 2) + data);
-	}
+    // Push the data onto the readable queue.
+    callback(null, '0'.repeat(data.length % 2) + data);
+  }
 });
 
 myTransform.setEncoding('ascii');
@@ -1297,9 +1297,9 @@ myTransform.write(100);
 
 #### new stream.Transform([options])
 
-* `options` <Object> 传递给 `Readable` 和 `Writable` 构造函数。同时还有以下字段：
-	* `transfrom` <Function> 用于实现 [stream._transform()](#transfrom_transfromchunk-encoding-callback) 方法
-	* `flush` <Function> 用于实现 [stream._flush()](#transform_flushcallback) 方法
+* `options` < Object > 传递给 `Readable` 和 `Writable` 构造函数。同时还有以下字段：
+  * `transfrom` < Function > 用于实现 [stream._transform()](#transfrom_transfromchunk-encoding-callback) 方法
+  * `flush` < Function > 用于实现 [stream._flush()](#transform_flushcallback) 方法
 
 例子如下：
 
@@ -1307,9 +1307,9 @@ myTransform.write(100);
 const Transform = require('stream').Transfrom;
 
 class MyTransfrom extends Transform {
-	constructor(options) {
-		super(options);
-	}
+  constructor(options) {
+    super(options);
+  }
 }
 ```
 
@@ -1320,10 +1320,10 @@ const Transform = require('stream').Transform;
 const util = require('util');
 
 function MyTransform(options) {
-	if (!(this instanceof MyDuple)) {
-		return new MyTransform(options);
-	}
-	Transform.call(this, options);
+  if (!(this instanceof MyDuple)) {
+    return new MyTransform(options);
+  }
+  Transform.call(this, options);
 }
 util.inherits(MyTransform, Transform);
 ```
@@ -1334,9 +1334,9 @@ util.inherits(MyTransform, Transform);
 const Transform = require('stream').Transform;
 
 const myTransform = new Transform({
-	transform(chunk, encoding, callback) {
-		// ...
-	}
+  transform(chunk, encoding, callback) {
+    // ...
+  }
 });
 ```
 
@@ -1346,7 +1346,7 @@ const myTransform = new Transform({
 
 #### transform._flush(callback)
 
-* `callback` <Function> 刷新剩余数据时调用的回调函数（可选地包含错误参数和数据）。
+* `callback` < Function > 刷新剩余数据时调用的回调函数（可选地包含错误参数和数据）。
 
 *注意：*此函数**不能直接由应用程序代码调用**。 它应该由子类实现，并且仅由内部 Readable 类方法调用。
 
@@ -1360,9 +1360,9 @@ const myTransform = new Transform({
 
 #### transfrom._transfrom(chunk, encoding, callback)
 
-* `chunk` <Buffer> | <String> 要进行转换的数据块。除非 `decodeStrings` 选项设置为 `false`。否则将一直是 Buffer。
-* `encoding` <String> 如果块是字符串，那么这是编码类型。 如果 `chunk` 是一个 Buffer，将忽略它。
-* `callback` <Function> 在处理提供的块之后调用的回调函数（可选地具有错误参数和数据）。
+* `chunk` < Buffer > | < String > 要进行转换的数据块。除非 `decodeStrings` 选项设置为 `false`。否则将一直是 Buffer。
+* `encoding` < String > 如果块是字符串，那么这是编码类型。 如果 `chunk` 是一个 Buffer，将忽略它。
+* `callback` < Function > 在处理提供的块之后调用的回调函数（可选地具有错误参数和数据）。
 
 *注意：* **此函数不能直接由应用程序代码调用。** 它应该由子类实现，并且仅由内部可读类方法调用。
 
@@ -1376,12 +1376,12 @@ const myTransform = new Transform({
 
 ``` javascript
 transfrom.prototype._transform = function(data, encoding, callback) {
-	this.push(data);
-	callback();
+  this.push(data);
+  callback();
 };
 
 transfrom.prototype._transfrom = function(data, encoding, callback) {
-	callback(null, data);
+  callback(null, data);
 };
 ```
 
